@@ -1,32 +1,29 @@
-package tests
+package server_tests
 
 import (
-    "testing"
-    "github.com/stretchr/testify/suite"
-//    "github.com/stretchr/testify/assert"
+	"testing"
+	"github.com/stretchr/testify/suite"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+
 	pb "github.com/Azat201003/summorist-shared/gen/go/user-service"
 )
 
-type BaseSuite struct {
+type serverSuite struct {
 	suite.Suite
 	usersClient *pb.UsersClient
 }
 
-func (s *BaseSuite) SetupTest() {	
+func (s *serverSuite) SetupTest() {
 	conn, err := grpc.NewClient("localhost:8001", grpc.WithTransportCredentials(insecure.NewCredentials()))
-	
-	if err != nil {
-		s.T().Fatalf("%v%v", "Not connected to client ", err)
-	}
 
-	defer conn.Close()
+	s.NoError(err)
+
 	client := pb.NewUsersClient(conn)
 	s.usersClient = &client
 }
 
-func TestSuit(t *testing.T) {
-	suite.Run(t, new(BaseSuite))
+func TestServer(t *testing.T) {
+	suite.Run(t, new(serverSuite))
 }
-

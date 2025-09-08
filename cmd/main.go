@@ -1,11 +1,9 @@
 package main
 
 import (
-// "fmt"
-// "github.com/Azat201003/summorist-shared/gen/go/common"
-// pb "github.com/Azat201003/summorist-shared/gen/go/user-service"
+	"github.com/Azat201003/summorist-users/internal/server"
 )
 
 func main() {
-	startServer()
+	server.StartServer("localhost", 8001)
 }
