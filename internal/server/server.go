@@ -18,6 +18,10 @@ func (s *userServer) SignIn(ctx context.Context, request *pb.SignInRequest) (*pb
 	return &pb.SignInResponse{JwtToken: "aoe"}, nil
 }
 
+func (s *userServer) Authorize(ctx context.Context, request *pb.AuthRequest) (*pb.AuthResponse, error) {
+	
+}
+
 func newServer() *userServer {
 	return &userServer{}
 }

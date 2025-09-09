@@ -8,7 +8,7 @@ import (
 )
 
 func (s *databaseSuite) TestCreateUserOk() {
-	err := s.dbc.CreateUser(&common.User{
+	_, err := s.dbc.CreateUser(&common.User{
 		Username: "test-" + generateRandomString(10),
 		PasswordHash: passwords.Hash(generateRandomString(16)),
 	})

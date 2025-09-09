@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN token_id INT REFERENCES token_keys(id) NOT NULL UNIQUE;

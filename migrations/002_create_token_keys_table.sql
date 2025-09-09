@@ -3,7 +3,4 @@ CREATE TABLE token_keys (
     private_key TEXT NOT NULL,
     public_key TEXT NOT NULL,
     is_active BOOLEAN DEFAULT true,
-    expires_at TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
