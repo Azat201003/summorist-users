@@ -19,7 +19,7 @@ func (s *userServer) SignIn(ctx context.Context, request *pb.SignInRequest) (*pb
 }
 
 func (s *userServer) Authorize(ctx context.Context, request *pb.AuthRequest) (*pb.AuthResponse, error) {
-	
+	return nil, nil
 }
 
 func newServer() *userServer {
