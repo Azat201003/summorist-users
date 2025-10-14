@@ -2,20 +2,45 @@ package tokens
 
 import (
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/Azat201003/summorist-users/internal/database"
-	"github.com/Azat201003/summorist-shared/gen/go/common"
+    "github.com/joho/godotenv"
 	"errors"
-	"strconv"
 	"time"
 )
 
-func GenerateToken(privateKey []byte, userId uint64) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.MapClaims{
+
+func GetPublicKey() (string, error) {
+	var m map[string]string
+	m, err := godotenv.Read("../../secrets.env")
+	if err != nil {
+        return "", err
+    }
+	if key, exists := m["PUBLIC_KEY"]; exists {
+		return key, nil
+	} else {
+		return "", errors.New("PUBLIC_KEY not found in secrets.env")
+	}
+}
+
+func GetPrivateKey() (string, error) {
+	m, err := godotenv.Read("../../secrets.env")
+	if err != nil {
+        return "", err
+    }
+	if key, exists := m["PRIVATE_KEY"]; exists {
+		return key, nil
+	} else {
+		return "", errors.New("PRIVATE_KEY not found in secrets.env")
+	}
+}
+
+func GenerateToken(userId uint64) (string, error) {
+	privateKey, _ := GetPrivateKey()
+	token := jwt.NewWithClaims(jwt.SigningMethodRS512, jwt.MapClaims{
 		"sub": userId,
 		"iat": time.Now().Unix(),
 	})
 
-	parsed, err := jwt.ParseRSAPrivateKeyFromPEM(privateKey)
+	parsed, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(privateKey))
 	if err != nil {
 		return "", err
 	}
@@ -24,30 +49,22 @@ func GenerateToken(privateKey []byte, userId uint64) (string, error) {
 	return tokenString, err
 }
 
-func ValidateKey(tokenString string, dbc database.DBController) (uint64, error) {
-	var user_id uint64
+func ValidateToken(tokenString string) (uint64, error) {
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
-		str_id, _ := token.Claims.GetSubject()
-		user_id, _ = strconv.ParseUint(str_id, 10, 64)
-		users, _ := dbc.FindUsers(&common.User{
-			Id: uint64(user_id),
-		})
-		if len(users) == 0 {
-			return nil, errors.New("No user found.")
+		key, err := GetPublicKey()
+		if err != nil {
+			return nil, err
 		}
-		found, _ := dbc.FindTokenKeys(&common.TokenKeys{
-				Id: users[0].TokenId,
-		})
-		res, _ := jwt.ParseRSAPublicKeyFromPEM(found[0].PublicKey)
-		return res, nil
-	}, jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}))
+		parsed, err := jwt.ParseRSAPublicKeyFromPEM([]byte(key))
+		return parsed, err
+	}, jwt.WithValidMethods([]string{jwt.SigningMethodRS512.Alg()}))
 	if err != nil {
 		return 0, err
 	}
 
-	if _, ok := token.Claims.(jwt.MapClaims); ok {
-		return user_id, nil
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		return uint64(claims["sub"].(float64)), nil
 	} else {
 		return 0, err
 	}
