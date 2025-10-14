@@ -5,6 +5,7 @@ go 1.25.0
 require (
 	github.com/Azat201003/summorist-shared v1.0.8
 	github.com/golang-jwt/jwt/v5 v5.3.0
+	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/crypto v0.39.0
 	google.golang.org/grpc v1.75.0
