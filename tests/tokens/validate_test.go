@@ -1,22 +1,20 @@
 package tokens_tests
 
 import (
-	"testing"
 	"github.com/Azat201003/summorist-users/internal/tokens"
 	"github.com/stretchr/testify/assert"
-//	"fmt"
+	"testing"
 )
 
 func TestValidationOk(t *testing.T) {
-	token, err := tokens.GenerateToken(2)
+	token, err := tokens.GenerateToken(2, "../../")
 	assert.NoError(t, err)
-	id, err := tokens.ValidateToken(token)
+	id, err := tokens.ValidateToken(token, "../../")
 	assert.NoError(t, err)
-	assert.Equal(t,id, uint64(2))
+	assert.Equal(t, id, uint64(2))
 }
 
 func TestValidationError(t *testing.T) {
-	_, err := tokens.ValidateToken("abrakadabra")
+	_, err := tokens.ValidateToken("abrakadabra", "../../")
 	assert.Error(t, err)
 }
-

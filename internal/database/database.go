@@ -1,8 +1,8 @@
 package database
 
 import (
-	"gorm.io/gorm"
 	"github.com/Azat201003/summorist-shared/gen/go/common"
+	"gorm.io/gorm"
 )
 
 type DBController struct {
@@ -26,21 +26,3 @@ func (dbc *DBController) UpdateUser(newUser *common.User) error {
 	return result.Error
 }
 
-
-
-func (dbc *DBController) CreateRefreshToken(token *common.RefreshToken) (uint64, error) {
-	result := dbc.DB.Create(token)
-	return token.Id, result.Error
-}
-
-func (dbc *DBController) FindRefreshToken(filter *common.RefreshToken) ([]common.RefreshToken, error) {
-	var tokens []common.RefreshToken
-	result := dbc.DB.Where(filter).Find(&tokens)
-	return tokens, result.Error
-}
-
-// Finding token keys to change by newTokenKeys.Id
-func (dbc *DBController) UpdateTokenKeys(newRefreshToken *common.RefreshToken) error {
-	result := dbc.DB.Save(newRefreshToken)
-	return result.Error
-}

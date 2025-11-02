@@ -1,11 +1,11 @@
 package database_tests
 
 import (
+	"github.com/Azat201003/summorist-users/internal/database"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"testing"
-	"github.com/Azat201003/summorist-users/internal/database"
 )
 
 type databaseSuite struct {
