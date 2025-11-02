@@ -39,7 +39,7 @@ func (s *userServer) SignIn(ctx context.Context, request *pb.SignInRequest) (*pb
 	if err != nil {
 		return &pb.SignInResponse{Code: 3}, err
 	}
-	return &pb.SignInResponse{JwtToken: jwtToken, Code: 0}, nil
+	return &pb.SignInResponse{JwtToken: jwtToken, Code: 0, RefreshToken: users[0].RefreshToken}, nil
 }
 
 func (s *userServer) Authorize(ctx context.Context, request *pb.AuthRequest) (*pb.AuthResponse, error) {
@@ -50,6 +50,32 @@ func (s *userServer) Authorize(ctx context.Context, request *pb.AuthRequest) (*p
 	}
 
 	return &pb.AuthResponse{UserId: userId, Code: 0}, nil
+}
+
+func (s *userServer) RefreshTokens(ctx context.Context, request *pb.RefreshRequest) (*pb.RefreshResponse, error) {
+	users, err := s.dbc.FindUsers(&common.User{
+		Username: request.Username,
+		RefreshToken: request.RefreshToken,
+	})
+
+	if err != nil {
+		return &pb.RefreshResponse{Code: 1}, err
+	}
+	if len(users) != 1 {
+		return &pb.RefreshResponse{Code: 2}, errors.New("No records found")
+	}
+	
+	jwtToken, err := tokens.GenerateToken(users[0].Id, "./")
+
+	newRefreshToken := tokens.GenerateRefreshToken()
+	users[0].RefreshToken = newRefreshToken
+	s.dbc.UpdateUser(&users[0])
+
+	return &pb.RefreshResponse{
+		RefreshToken: newRefreshToken,
+		JwtToken: jwtToken,
+		Code: 0,
+	}, nil
 }
 
 func newServer() *userServer {
