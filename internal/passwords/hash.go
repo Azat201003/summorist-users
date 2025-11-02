@@ -5,11 +5,11 @@ import (
 )
 
 const (
-	MEMORY = 64 * 1024
-	ITERATIONS = 3
+	MEMORY      = 64 * 1024
+	ITERATIONS  = 3
 	PARALLELISM = 3
-	SALT = "chikibambony"
-	KEY_LENGTH = 64
+	SALT        = "chikibambony"
+	KEY_LENGTH  = 64
 )
 
 func Hash(password string) []byte {
@@ -40,4 +40,3 @@ func compareBytes(a, b []byte) bool {
 
 	return true
 }
-

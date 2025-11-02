@@ -1,19 +1,18 @@
 package tokens
 
 import (
-	"github.com/golang-jwt/jwt/v5"
-    "github.com/joho/godotenv"
 	"errors"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/joho/godotenv"
 	"time"
 )
 
-
-func GetPublicKey() (string, error) {
+func GetPublicKey(base string) (string, error) {
 	var m map[string]string
-	m, err := godotenv.Read("../../secrets.env")
+	m, err := godotenv.Read(base + "secrets.env")
 	if err != nil {
-        return "", err
-    }
+		return "", err
+	}
 	if key, exists := m["PUBLIC_KEY"]; exists {
 		return key, nil
 	} else {
@@ -21,11 +20,11 @@ func GetPublicKey() (string, error) {
 	}
 }
 
-func GetPrivateKey() (string, error) {
-	m, err := godotenv.Read("../../secrets.env")
+func GetPrivateKey(base string) (string, error) {
+	m, err := godotenv.Read(base + "secrets.env")
 	if err != nil {
-        return "", err
-    }
+		return "", err
+	}
 	if key, exists := m["PRIVATE_KEY"]; exists {
 		return key, nil
 	} else {
@@ -33,8 +32,9 @@ func GetPrivateKey() (string, error) {
 	}
 }
 
-func GenerateToken(userId uint64) (string, error) {
-	privateKey, _ := GetPrivateKey()
+func GenerateToken(userId uint64, base string) (string, error) {
+	privateKey, err := GetPrivateKey(base)
+
 	token := jwt.NewWithClaims(jwt.SigningMethodRS512, jwt.MapClaims{
 		"sub": userId,
 		"iat": time.Now().Unix(),
@@ -49,10 +49,10 @@ func GenerateToken(userId uint64) (string, error) {
 	return tokenString, err
 }
 
-func ValidateToken(tokenString string) (uint64, error) {
+func ValidateToken(tokenString, base string) (uint64, error) {
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
-		key, err := GetPublicKey()
+		key, err := GetPublicKey(base)
 		if err != nil {
 			return nil, err
 		}
@@ -69,4 +69,3 @@ func ValidateToken(tokenString string) (uint64, error) {
 		return 0, err
 	}
 }
-
