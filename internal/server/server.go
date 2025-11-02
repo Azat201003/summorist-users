@@ -43,7 +43,13 @@ func (s *userServer) SignIn(ctx context.Context, request *pb.SignInRequest) (*pb
 }
 
 func (s *userServer) Authorize(ctx context.Context, request *pb.AuthRequest) (*pb.AuthResponse, error) {
-	return nil, nil
+	userId, err := tokens.ValidateToken(request.JwtToken, "./")
+
+	if (err != nil) {
+		return &pb.AuthResponse{Code: 1}, err
+	}
+
+	return &pb.AuthResponse{UserId: userId, Code: 0}, nil
 }
 
 func newServer() *userServer {
