@@ -5,13 +5,14 @@ import (
 	"encoding/hex"
 	"github.com/Azat201003/summorist-shared/gen/go/common"
 	"github.com/Azat201003/summorist-users/internal/passwords"
+	"github.com/Azat201003/summorist-users/internal/tokens"
 )
 
 func (s *databaseSuite) TestCreateUserOk() {
 	_, err := s.dbc.CreateUser(&common.User{
 		Username:       "test-" + generateRandomString(10),
 		PasswordHash:   passwords.Hash(generateRandomString(16)),
-		RefreshToken:	"1234",
+		RefreshToken:	tokens.GenerateRefreshToken(),
 	})
 	s.NoError(err)
 }
