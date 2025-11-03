@@ -10,4 +10,5 @@ func main() {
 	var password string
 	fmt.Scan(&password)
 	fmt.Println(hex.EncodeToString(passwords.Hash(password)))
+	fmt.Println(passwords.Hash(password))
 }

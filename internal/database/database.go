@@ -25,4 +25,3 @@ func (dbc *DBController) UpdateUser(newUser *common.User) error {
 	result := dbc.DB.Save(newUser)
 	return result.Error
 }
-

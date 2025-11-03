@@ -1,20 +1,23 @@
-package database_tests
+package server_tests
 
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"context"
+
 	"github.com/Azat201003/summorist-shared/gen/go/common"
 	"github.com/Azat201003/summorist-users/internal/passwords"
-	"github.com/Azat201003/summorist-users/internal/tokens"
 )
 
-func (s *databaseSuite) TestCreateUserOk() {
-	_, err := s.dbc.CreateUser(&common.User{
-		Username:     "test-" + generateRandomString(10),
+func (s *serverSuite) TestCreateUserOk() {
+	username := "test-" + generateRandomString(10)
+
+	response, err := (*s.usersClient).SignUp(context.Background(), &common.User{
+		Username:     username,
 		PasswordHash: passwords.Hash(generateRandomString(16)),
-		RefreshToken: tokens.GenerateRefreshToken(),
 	})
 	s.NoError(err)
+	s.Equal(response.Code, int32(0))
 }
 
 func generateRandomString(n int) string {
