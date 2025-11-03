@@ -3,8 +3,8 @@ package server_tests
 import (
 	"context"
 
-	pb "github.com/Azat201003/summorist-shared/gen/go/user-service"
 	"github.com/Azat201003/summorist-shared/gen/go/common"
+	pb "github.com/Azat201003/summorist-shared/gen/go/user-service"
 	"github.com/Azat201003/summorist-users/internal/tokens"
 )
 
@@ -13,7 +13,7 @@ func (s *serverSuite) TestRefreshTokenOk() {
 	user := users[0]
 
 	response, err := (*s.usersClient).RefreshTokens(context.Background(), &pb.RefreshRequest{
-		Username: "Abeme",
+		Username:     "Abeme",
 		RefreshToken: user.RefreshToken,
 	})
 

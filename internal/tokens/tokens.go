@@ -1,11 +1,11 @@
 package tokens
 
 import (
-	"errors"
 	"crypto/rand"
-	"math/big"
+	"errors"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
+	"math/big"
 	"time"
 )
 
@@ -78,12 +78,11 @@ func GenerateRefreshToken() string {
 		charset     = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
 	)
 	token := make([]byte, tokenLength)
-	
+
 	for i := range token {
 		randomIndex, _ := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
 		token[i] = charset[randomIndex.Int64()]
 	}
-	
+
 	return string(token)
 }
-
