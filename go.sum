@@ -1,3 +1,5 @@
+github.com/Azat201003/summorist-shared v1.0.14 h1:thANbSOfBDVf0Pq8aAWdpU7WiOAPei2Xq9OiEbx1708=
+github.com/Azat201003/summorist-shared v1.0.14/go.mod h1:m82ta7NQ6h9AFuuOJDOVibWjUtcjMnYKOcb2Zd2emkY=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=

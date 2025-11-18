@@ -8,7 +8,7 @@ import (
 func main() {
 	var userId uint64
 	fmt.Scan(&userId)
-	r, err := tokens.GenerateToken(userId, "../../")
+	r, err := tokens.GenerateToken(userId)
 	if err != nil {
 		fmt.Println("Error: ", err)
 	} else {
