@@ -16,6 +16,7 @@ import (
 	"github.com/Azat201003/summorist-shared/gen/go/common"
 	"github.com/Azat201003/summorist-users/internal/database"
 	"github.com/Azat201003/summorist-users/internal/tokens"
+	"github.com/Azat201003/summorist-users/internal/config"
 )
 
 type userServer struct {
@@ -34,7 +35,7 @@ func (s *userServer) SignIn(ctx context.Context, request *pb.SignInRequest) (*pb
 	if len(users) != 1 {
 		return &pb.SignInResponse{Code: 2}, errors.New("No records found")
 	}
-	jwtToken, err := tokens.GenerateToken(users[0].Id, "./")
+	jwtToken, err := tokens.GenerateToken(users[0].Id)
 	//	key, err1 := tokens.GetPublicKey()
 	if err != nil {
 		return &pb.SignInResponse{Code: 3}, err
@@ -43,7 +44,7 @@ func (s *userServer) SignIn(ctx context.Context, request *pb.SignInRequest) (*pb
 }
 
 func (s *userServer) Authorize(ctx context.Context, request *pb.AuthRequest) (*pb.AuthResponse, error) {
-	userId, err := tokens.ValidateToken(request.JwtToken, "./")
+	userId, err := tokens.ValidateToken(request.JwtToken)
 
 	if err != nil {
 		return &pb.AuthResponse{Code: 1}, err
@@ -76,7 +77,7 @@ func (s *userServer) RefreshTokens(ctx context.Context, request *pb.RefreshReque
 		return &pb.RefreshResponse{Code: 2}, errors.New("No records found")
 	}
 
-	jwtToken, err := tokens.GenerateToken(users[0].Id, "./")
+	jwtToken, err := tokens.GenerateToken(users[0].Id)
 
 	newRefreshToken := tokens.GenerateRefreshToken()
 	users[0].RefreshToken = newRefreshToken
@@ -103,12 +104,13 @@ func newServer() *userServer {
 }
 
 func StartServer(host string, port int) {
-	lis, err := net.Listen("tcp", fmt.Sprintf("%v:%v", host, port))
+	conf := config.GetConfig()
+	lis, err := net.Listen("tcp", fmt.Sprintf("%v:%v", conf.Host, conf.Port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	grpcServer := grpc.NewServer()
 	pb.RegisterUsersServer(grpcServer, newServer())
-	log.Printf("Server starting on port %v", port)
+	log.Printf("Server starting on port %v", conf.Port)
 	grpcServer.Serve(lis)
 }

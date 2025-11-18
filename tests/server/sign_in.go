@@ -23,7 +23,7 @@ func (s *serverSuite) TestSignInOk() {
 		s.Equal(users[0].RefreshToken, response.RefreshToken)
 	}
 
-	id, err := tokens.ValidateToken(response.JwtToken, "../../")
+	id, err := tokens.ValidateToken(response.JwtToken)
 	s.NoError(err)
 
 	users, err = s.dbc.FindUsers(

@@ -8,7 +8,7 @@ import (
 )
 
 func (s *serverSuite) TestAuthorizeOk() {
-	token, err := tokens.GenerateToken(27, "../../")
+	token, err := tokens.GenerateToken(27)
 
 	response, err := (*s.usersClient).Authorize(context.Background(), &pb.AuthRequest{
 		JwtToken: token,

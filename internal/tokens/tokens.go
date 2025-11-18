@@ -2,40 +2,14 @@ package tokens
 
 import (
 	"crypto/rand"
-	"errors"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
+	"github.com/Azat201003/summorist-users/internal/config"
 	"math/big"
 	"time"
 )
 
-func GetPublicKey(base string) (string, error) {
-	var m map[string]string
-	m, err := godotenv.Read(base + "secrets.env")
-	if err != nil {
-		return "", err
-	}
-	if key, exists := m["PUBLIC_KEY"]; exists {
-		return key, nil
-	} else {
-		return "", errors.New("PUBLIC_KEY not found in secrets.env")
-	}
-}
-
-func GetPrivateKey(base string) (string, error) {
-	m, err := godotenv.Read(base + "secrets.env")
-	if err != nil {
-		return "", err
-	}
-	if key, exists := m["PRIVATE_KEY"]; exists {
-		return key, nil
-	} else {
-		return "", errors.New("PRIVATE_KEY not found in secrets.env")
-	}
-}
-
-func GenerateToken(userId uint64, base string) (string, error) {
-	privateKey, err := GetPrivateKey(base)
+func GenerateToken(userId uint64) (string, error) {
+	privateKey := config.GetConfig().PrivateKey
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS512, jwt.MapClaims{
 		"sub": userId,
@@ -51,13 +25,9 @@ func GenerateToken(userId uint64, base string) (string, error) {
 	return tokenString, err
 }
 
-func ValidateToken(tokenString, base string) (uint64, error) {
-
+func ValidateToken(tokenString string) (uint64, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
-		key, err := GetPublicKey(base)
-		if err != nil {
-			return nil, err
-		}
+		key := config.GetConfig().PublicKey
 		parsed, err := jwt.ParseRSAPublicKeyFromPEM([]byte(key))
 		return parsed, err
 	}, jwt.WithValidMethods([]string{jwt.SigningMethodRS512.Alg()}))

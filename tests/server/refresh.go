@@ -20,7 +20,7 @@ func (s *serverSuite) TestRefreshTokenOk() {
 	s.NoError(err)
 	s.Equal(response.Code, int32(0))
 
-	id, err := tokens.ValidateToken(response.JwtToken, "../../")
+	id, err := tokens.ValidateToken(response.JwtToken)
 	s.NoError(err)
 	s.Equal(id, uint64(27))
 
