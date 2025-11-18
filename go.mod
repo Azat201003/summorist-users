@@ -36,4 +36,3 @@ require (
 
 replace github.com/Azat201003/summorist-users => ./
 
-replace github.com/Azat201003/summorist-shared => ../../shared
