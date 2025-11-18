@@ -2,8 +2,8 @@ package tokens
 
 import (
 	"crypto/rand"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/Azat201003/summorist-users/internal/config"
+	"github.com/golang-jwt/jwt/v5"
 	"math/big"
 	"time"
 )

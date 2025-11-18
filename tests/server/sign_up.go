@@ -1,9 +1,9 @@
 package server_tests
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/hex"
-	"context"
 
 	"github.com/Azat201003/summorist-shared/gen/go/common"
 	"github.com/Azat201003/summorist-users/internal/passwords"

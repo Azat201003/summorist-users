@@ -4,6 +4,8 @@ import (
 	"github.com/stretchr/testify/suite"
 	"testing"
 
+	"fmt"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
@@ -12,6 +14,7 @@ import (
 
 	pb "github.com/Azat201003/summorist-shared/gen/go/user-service"
 
+	"github.com/Azat201003/summorist-users/internal/config"
 	"github.com/Azat201003/summorist-users/internal/database"
 )
 
@@ -31,7 +34,15 @@ func (s *serverSuite) SetupTest() {
 	s.usersClient = &client
 
 	// database
-	dsn := "host=localhost user=smrt_users password=1234 dbname=smrt_users port=5432 sslmode=disable TimeZone=Europe/Moscow"
+	conf := config.GetConfig()
+	dsn := fmt.Sprintf(
+		"host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=Europe/Moscow",
+		conf.DBHost,
+		conf.DBUser,
+		conf.DBPassword,
+		conf.DBName,
+		conf.DBPort,
+	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	s.NoError(err)
 	s.dbc = &database.DBController{

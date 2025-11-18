@@ -14,9 +14,9 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/Azat201003/summorist-shared/gen/go/common"
+	"github.com/Azat201003/summorist-users/internal/config"
 	"github.com/Azat201003/summorist-users/internal/database"
 	"github.com/Azat201003/summorist-users/internal/tokens"
-	"github.com/Azat201003/summorist-users/internal/config"
 )
 
 type userServer struct {
@@ -91,7 +91,15 @@ func (s *userServer) RefreshTokens(ctx context.Context, request *pb.RefreshReque
 }
 
 func newServer() *userServer {
-	dsn := "host=localhost user=smrt_users password=1234 dbname=smrt_users port=5432 sslmode=disable TimeZone=Europe/Moscow"
+	conf := config.GetConfig()
+	dsn := fmt.Sprintf(
+		"host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=Europe/Moscow",
+		conf.DBHost,
+		conf.DBUser,
+		conf.DBPassword,
+		conf.DBName,
+		conf.DBPort,
+	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -105,12 +113,8 @@ func newServer() *userServer {
 
 func StartServer(host string, port int) {
 	conf := config.GetConfig()
-	lis, err := net.Listen("tcp", fmt.Sprintf("%v:%v", conf.Host, conf.Port))
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
+	lis, _ := net.Listen("tcp", fmt.Sprintf("%v:%v", conf.Host, conf.Port))
 	grpcServer := grpc.NewServer()
 	pb.RegisterUsersServer(grpcServer, newServer())
-	log.Printf("Server starting on port %v", conf.Port)
 	grpcServer.Serve(lis)
 }
