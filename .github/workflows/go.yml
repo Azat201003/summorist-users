@@ -9,30 +9,30 @@ on:
 jobs:
 
   build:
-    environment: deploy
+    environment: secrets
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v4
   
     - name: Build
       env:
-        PUBLIC_KEY: ${{ deploy.PUBLIC_KEY }}
-        PRIVATE_KEY: ${{ deploy.PRIVATE_KEY }}
-        POSTGRES_PASSWORD: ${{ deploy.POSTGRES_PASSWORD }}
+        PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: |+
         set -a
-        source config.env.deploy
+        source config.env.secrets
         set +a
         docker compose -f docker-compose-tests.yml up -d --build
 
     - name: Test
       env:
-        PUBLIC_KEY: ${{ deploy.PUBLIC_KEY }}
-        PRIVATE_KEY: ${{ deploy.PRIVATE_KEY }}
-        POSTGRES_PASSWORD: ${{ deploy.POSTGRES_PASSWORD }}
+        PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: |+
         set -a
-        source config.env.deploy
+        source config.env.secrets
         set +a
         docker compose exec app go test ./tests/...
 
