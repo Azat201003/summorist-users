@@ -18,7 +18,7 @@ type databaseSuite struct {
 func (s *databaseSuite) SetupTest() {
 	conf := config.GetConfig()
 	dsn := fmt.Sprintf(
-		"host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=Europe/Moscow",
+		"host=%v user=%v password=%v dbname=%v port=%v sslmode=disable",
 		conf.DBHost,
 		conf.DBUser,
 		conf.DBPassword,

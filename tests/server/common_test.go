@@ -26,7 +26,8 @@ type serverSuite struct {
 
 func (s *serverSuite) SetupTest() {
 	// service client
-	conn, err := grpc.NewClient("localhost:8001", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conf := config.GetConfig()
+	conn, err := grpc.NewClient(fmt.Sprintf("%v:%v", conf.Host, conf.Port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	s.NoError(err)
 
@@ -34,9 +35,8 @@ func (s *serverSuite) SetupTest() {
 	s.usersClient = &client
 
 	// database
-	conf := config.GetConfig()
 	dsn := fmt.Sprintf(
-		"host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=Europe/Moscow",
+		"host=%v user=%v password=%v dbname=%v port=%v sslmode=disable",
 		conf.DBHost,
 		conf.DBUser,
 		conf.DBPassword,

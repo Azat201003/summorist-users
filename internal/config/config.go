@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+    "fmt"
 )
 
 type Config struct {
@@ -28,11 +29,11 @@ func GetConfig() Config {
 		// config.env.*
 		config.Host = os.Getenv("HOST")
 		config.Port = os.Getenv("PORT")
-		config.DBHost = os.Getenv("DBHOST")
-		config.DBPort = os.Getenv("DBPORT")
-		config.DBUser = os.Getenv("DBUSER")
-		config.DBName = os.Getenv("DBNAME")
-		config.DBPassword = os.Getenv("DBPASSWORD")
+		config.DBHost = os.Getenv("POSTGRES_HOST")
+		config.DBPort = os.Getenv("POSTGRES_PORT")
+		config.DBUser = os.Getenv("POSTGRES_USER")
+		config.DBName = os.Getenv("POSTGRES_DB")
+		config.DBPassword = os.Getenv("POSTGRES_PASSWORD")
 		isRead = true
 	}
 	return config

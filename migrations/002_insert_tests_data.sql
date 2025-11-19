@@ -1,0 +1,7 @@
+INSERT INTO users
+(username, password_hash, refresh_token, test)
+VALUES
+('Abeme', '\x4e22ca20b73d9769e919c3d677ba3ddee0d6eedd6bda71701552a092d4e43ddb551a473f388366dd8ca43be12962e700542a3ccb1a3b575130
+f9b2d512fe5fed', 'fgR31SRpnVtk6g-AUtQIRdxqOLs6t5tInQMtoQWGkXEGcE8J2GTRuR5fz3F7BgY9j6d-FYu-IPfYfXPLDy9Q50-mgR5jxlC1c5ETxvaUBlW2gw31sFwk
+aV6JvvmRjzdBSxgNUreZJL9BkPiEpPvnO0wbuii-9ddBvuJhAtzqoeq9Mn4PJAJpbiLv9r9f96_m8PI639v02ec3eW18m1MPGIYjLzMa6MKdQkTam-lgrkzm3istVLdbUIrGj
+V8RZIzY', TRUE)

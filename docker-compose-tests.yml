@@ -1,0 +1,45 @@
+services:
+  app:
+    hostname: $HOST
+    build:
+      context: .
+      dockerfile: ./Dockerfile-tests
+    ports:
+      - $PORT:$PORT
+    env_file: $CONFIG_NAME
+    environment:
+      PUBLIC_KEY: $PUBLIC_KEY
+      PRIVATE_KEY: $PRIVATE_KEY
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - usersnet
+
+  db:
+    image: postgres:16-alpine
+    hostname: $POSTGRES_HOST
+    restart: always
+    shm_size: 128mb
+    ports:
+      - 5432:$POSTGRES_PORT
+    env_file:
+      - path: ./$CONFIG_NAME
+        required: true
+    environment:
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    volumes:
+      - ./migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - usersnet
+
+networks:
+  usersnet:
+    driver: bridge
+

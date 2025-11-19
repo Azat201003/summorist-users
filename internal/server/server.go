@@ -93,13 +93,14 @@ func (s *userServer) RefreshTokens(ctx context.Context, request *pb.RefreshReque
 func newServer() *userServer {
 	conf := config.GetConfig()
 	dsn := fmt.Sprintf(
-		"host=%v user=%v password=%v dbname=%v port=%v sslmode=disable TimeZone=Europe/Moscow",
+		"host=%v user=%v password=%v dbname=%v port=%v sslmode=disable",
 		conf.DBHost,
 		conf.DBUser,
 		conf.DBPassword,
 		conf.DBName,
 		conf.DBPort,
 	)
+    fmt.Println(dsn)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -111,7 +112,7 @@ func newServer() *userServer {
 	}}
 }
 
-func StartServer(host string, port int) {
+func StartServer() {
 	conf := config.GetConfig()
 	lis, _ := net.Listen("tcp", fmt.Sprintf("%v:%v", conf.Host, conf.Port))
 	grpcServer := grpc.NewServer()

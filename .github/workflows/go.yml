@@ -9,18 +9,11 @@ on:
 jobs:
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: sigma-computer
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.25'
-
     - name: Build
-      run: mkdir bin && go build -o bin -v ./cmd ./internal/... ./scripts/...
+      run: set -a && source config.env.deploy && set +a && docker compose -f docker-compose-tests.yml up -d --build
 
     - name: Test
-      run: make run & && make test
+      run: set -a && source config.env.deploy && set +a && docker compose exec app go test ./tests/...
 
