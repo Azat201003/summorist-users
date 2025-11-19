@@ -7,12 +7,12 @@ on:
     branches: [ "main" ]
 
 jobs:
+
   build:
     runs-on: self-hosted
-    - name: Checkout
-      uses: actions/checkout@v4
-  
     steps:
+    - uses: actions/checkout@v4
+  
     - name: Build
       run: |+
         set -a
