@@ -10,10 +10,27 @@ jobs:
 
   build:
     runs-on: self-hosted
+    - name: Checkout
+      uses: actions/checkout@v4
+  
     steps:
     - name: Build
-      run: set -a && source config.env.deploy && set +a && docker compose -f docker-compose-tests.yml up -d --build
+      run: |
+        set -a
+        source config.env.deploy
+        set +a
+        export PUBLIC_KEY=${{ secrets.PUBLIC_KEY }}
+        export PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}
+        export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+        docker compose -f docker-compose-tests.yml up -d --build
 
     - name: Test
-      run: set -a && source config.env.deploy && set +a && docker compose exec app go test ./tests/...
+      run: |
+        set -a
+        source config.env.deploy
+        set +a
+        export PUBLIC_KEY=${{ secrets.PUBLIC_KEY }}
+        export PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}
+        export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+        docker compose exec app go test ./tests/...
 
