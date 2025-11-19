@@ -12,5 +12,5 @@ test-develop:
 	bash -c 'set -a && source secrets.env && source config.env.develop && set +a && go test -v ./tests/...'
 
 test-deploy:
-	bash -c 'set -a && source config.env.deploy && set +a && docker compose up -d --build && docker compose exec app go test ./tests/...'
+	bash -c 'set -a && source config.env.deploy && set +a && docker compose -f docker-compose-tests.yml up -d --build && docker compose exec app go test ./tests/...'
 
