@@ -9,7 +9,7 @@ on:
 jobs:
 
   build:
-    runs-on: sigma-computer
+    runs-on: self-hosted
     steps:
     - name: Build
       run: set -a && source config.env.deploy && set +a && docker compose -f docker-compose-tests.yml up -d --build
