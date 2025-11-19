@@ -21,7 +21,7 @@ jobs:
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: |+
         set -a
-        source config.env.secrets
+        source config.env.deploy
         set +a
         docker compose -f docker-compose-tests.yml up -d --build
 
@@ -32,7 +32,7 @@ jobs:
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: |+
         set -a
-        source config.env.secrets
+        source config.env.deploy
         set +a
         docker compose exec app go test ./tests/...
 
