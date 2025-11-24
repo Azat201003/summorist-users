@@ -90,6 +90,20 @@ func (s *userServer) RefreshTokens(ctx context.Context, request *pb.RefreshReque
 	}, nil
 }
 
+func (s *userServer) GetFiltered(request *common.User, stream pb.Users_GetFilteredServer) error {
+	users, err := s.dbc.FindUsers(request)
+	if err != nil {
+		return err
+	}
+
+	for _, user := range users {
+		if err := stream.Send(&user); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func newServer() *userServer {
 	conf := config.GetConfig()
 	dsn := fmt.Sprintf(
