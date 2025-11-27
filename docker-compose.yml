@@ -2,6 +2,7 @@ services:
   app:
     hostname: $HOST
     build: .
+    container_name: app
     ports:
       - $PORT:$PORT
     env_file: $CONFIG_NAME

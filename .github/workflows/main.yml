@@ -23,16 +23,11 @@ jobs:
         set -a
         source config.env.deploy
         set +a
-        docker compose -f docker-compose-tests.yml up --build &
+        docker compose -f docker-compose-tests.yml up -d --build
+
+    - name: Wait
+      run: ./scripts/wait-for-it.sh
 
     - name: Test
-      env:
-        PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
-        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      run: |+
-        set -a
-        source config.env.deploy
-        set +a
-        docker compose exec app go test ./tests/...
+      run: docker compose exec app go test ./tests/...
 

@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile-tests
+    container_name: app
     ports:
       - $PORT:$PORT
     env_file: $CONFIG_NAME
