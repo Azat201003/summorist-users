@@ -1,4 +1,4 @@
-FROM golang:1.25-alpine AS builder
+FROM golang:1.25
 
 WORKDIR /app
 
@@ -7,14 +7,9 @@ RUN go mod download
 
 COPY ./cmd ./cmd
 COPY ./internal ./internal
+COPY ./tests ./tests
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd
-
-FROM alpine:latest
-
-WORKDIR /app
-
-COPY --from=builder /app/main .
 
 EXPOSE $PORT
 
