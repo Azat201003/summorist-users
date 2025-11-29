@@ -2,7 +2,7 @@ services:
   app:
     hostname: $HOST
     build: .
-    container_name: app
+    container_name: $APP_CONTAINER_NAME
     ports:
       - $PORT:$PORT
     env_file: $CONFIG_NAME
@@ -21,6 +21,7 @@ services:
     hostname: $POSTGRES_HOST
     restart: always
     shm_size: 128mb
+    container_name: $POSTGRES_CONTAINER_NAME
     ports:
       - 5432:$POSTGRES_PORT
     env_file:
