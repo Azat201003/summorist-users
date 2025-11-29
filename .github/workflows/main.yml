@@ -27,7 +27,11 @@ jobs:
         docker exec $POSTGRES_CONTAINER_NAME sh -c "cat /docker-entrypoint-initdb.d/*.sql | psql $POSTGRES_DB $POSTGRES_USER"
 
     - name: Wait app
-      run: ./scripts/wait-for.sh $APP_CONTAINER_NAME
+      run: |+
+        set -a
+        source config.env.deploy
+        set +a
+        ./scripts/wait-for.sh $APP_CONTAINER_NAME
 
     - name: Test
       env:
