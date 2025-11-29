@@ -24,9 +24,9 @@ jobs:
         source config.env.deploy
         set +a
         docker compose -f docker-compose.yml up -d --build
-        docker compose exec $POSTGRES_CONTAINER_NAME cat /docker-entrypoint-initdb.d/*.sql | psql -U $POSTGRES_DB -d $POSTGRES_USER
+        docker exec -it $POSTGRES_CONTAINER_NAME sh -c "cat /docker-entrypoint-initdb.d/*.sql | psql $POSTGRES_DB $POSTGRES_USER"
 
-    - name: Wait
+    - name: Wait app
       run: ./scripts/wait-for-it.sh
 
     - name: Test
