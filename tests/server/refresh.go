@@ -22,7 +22,7 @@ func (s *serverSuite) TestRefreshTokenOk() {
 
 	id, err := tokens.ValidateToken(response.JwtToken)
 	s.NoError(err)
-	s.Equal(id, uint64(1))
+	s.Equal(id, uint64(1), "Another id")
 
 	users, err = s.dbc.FindUsers(&common.User{Username: "Abeme"})
 	s.NotEqual(response.RefreshToken, "")
