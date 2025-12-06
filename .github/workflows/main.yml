@@ -21,7 +21,7 @@ jobs:
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: |+
         set -a
-        source config.env.deploy
+        source config.deploy.env
         set +a
         docker compose -f docker-compose.yml up -d --build
         docker exec $POSTGRES_CONTAINER_NAME sh -c "cat /docker-entrypoint-initdb.d/*.sql | psql $POSTGRES_DB $POSTGRES_USER"
@@ -40,7 +40,7 @@ jobs:
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: |+
         set -a
-        source config.env.deploy
+        source config.deploy.env
         set +a
         docker exec $APP_CONTAINER_NAME go test ./tests/...
 
