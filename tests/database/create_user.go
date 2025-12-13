@@ -3,13 +3,13 @@ package database_tests
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"github.com/Azat201003/summorist-shared/gen/go/common"
+	pb "github.com/Azat201003/summorist-shared/gen/go/users"
 	"github.com/Azat201003/summorist-users/internal/passwords"
 	"github.com/Azat201003/summorist-users/internal/tokens"
 )
 
 func (s *databaseSuite) TestCreateUserOk() {
-	_, err := s.dbc.CreateUser(&common.User{
+	_, err := s.dbc.CreateUser(&pb.User{
 		Username:     "test-" + generateRandomString(10),
 		PasswordHash: passwords.Hash(generateRandomString(16)),
 		RefreshToken: tokens.GenerateRefreshToken(),

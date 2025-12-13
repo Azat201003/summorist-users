@@ -5,14 +5,14 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 
-	"github.com/Azat201003/summorist-shared/gen/go/common"
+	pb "github.com/Azat201003/summorist-shared/gen/go/users"
 	"github.com/Azat201003/summorist-users/internal/passwords"
 )
 
 func (s *serverSuite) TestCreateUserOk() {
 	username := "test-" + generateRandomString(10)
 
-	response, err := (*s.usersClient).SignUp(context.Background(), &common.User{
+	response, err := (*s.usersClient).SignUp(context.Background(), &pb.User{
 		Username:     username,
 		PasswordHash: passwords.Hash(generateRandomString(16)),
 	})

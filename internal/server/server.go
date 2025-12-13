@@ -10,10 +10,9 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	pb "github.com/Azat201003/summorist-shared/gen/go/user-service"
 	"google.golang.org/grpc"
 
-	"github.com/Azat201003/summorist-shared/gen/go/common"
+	pb "github.com/Azat201003/summorist-shared/gen/go/users"
 	"github.com/Azat201003/summorist-users/internal/config"
 	"github.com/Azat201003/summorist-users/internal/database"
 	"github.com/Azat201003/summorist-users/internal/tokens"
@@ -25,7 +24,7 @@ type userServer struct {
 }
 
 func (s *userServer) SignIn(ctx context.Context, request *pb.SignInRequest) (*pb.SignInResponse, error) {
-	users, err := s.dbc.FindUsers(&common.User{
+	users, err := s.dbc.FindUsers(&pb.User{
 		Username:     request.Username,
 		PasswordHash: request.PasswordHash,
 	})
@@ -53,19 +52,19 @@ func (s *userServer) Authorize(ctx context.Context, request *pb.AuthRequest) (*p
 	return &pb.AuthResponse{UserId: userId, Code: 0}, nil
 }
 
-func (s *userServer) SignUp(ctx context.Context, request *common.User) (*pb.SignUpResponse, error) {
+func (s *userServer) SignUp(ctx context.Context, request *pb.User) (*pb.StatusResponse, error) {
 	request.RefreshToken = tokens.GenerateRefreshToken()
 	_, err := s.dbc.CreateUser(request)
 
 	if err != nil {
-		return &pb.SignUpResponse{Code: 1}, err
+		return &pb.StatusResponse{Code: 1}, err
 	}
 
-	return &pb.SignUpResponse{Code: 0}, nil
+	return &pb.StatusResponse{Code: 0}, nil
 }
 
 func (s *userServer) RefreshTokens(ctx context.Context, request *pb.RefreshRequest) (*pb.RefreshResponse, error) {
-	users, err := s.dbc.FindUsers(&common.User{
+	users, err := s.dbc.FindUsers(&pb.User{
 		Username:     request.Username,
 		RefreshToken: request.RefreshToken,
 	})
@@ -90,7 +89,7 @@ func (s *userServer) RefreshTokens(ctx context.Context, request *pb.RefreshReque
 	}, nil
 }
 
-func (s *userServer) GetFiltered(request *common.User, stream pb.Users_GetFilteredServer) error {
+func (s *userServer) GetFiltered(request *pb.User, stream pb.Users_GetFilteredServer) error {
 	users, err := s.dbc.FindUsers(request)
 	if err != nil {
 		return err
@@ -102,6 +101,40 @@ func (s *userServer) GetFiltered(request *common.User, stream pb.Users_GetFilter
 		}
 	}
 	return nil
+}
+
+func (s *userServer) UpdateUser(ctx context.Context, request *pb.UpdateRequest) (*pb.StatusResponse, error) {
+	userId, err := tokens.ValidateToken(request.JwtToken)
+	if (err != nil) {
+		return &pb.StatusResponse{Code: 1}, err
+	}
+
+	if (userId != request.User.Id) {
+		return &pb.StatusResponse{Code: 2}, nil // Permission denieded
+	}
+
+	err = s.dbc.UpdateUser(request.User)
+	if err != nil {
+		return &pb.StatusResponse{Code: 3}, err
+	}
+	return &pb.StatusResponse{Code: 0}, nil
+}
+
+func (s *userServer) RemoveUser(ctx context.Context, request *pb.RemoveRequest) (*pb.StatusResponse, error) {
+	userId, err := tokens.ValidateToken(request.JwtToken)
+	if (err != nil) {
+		return &pb.StatusResponse{Code: 1}, err
+	}
+
+	if (userId != request.UserId) {
+		return &pb.StatusResponse{Code: 2}, nil // Permission denieded
+	}
+
+	err = s.dbc.DeleteUser(request.UserId)
+	if err != nil {
+		return &pb.StatusResponse{Code: 3}, err
+	}
+	return &pb.StatusResponse{Code: 0}, nil
 }
 
 func newServer() *userServer {

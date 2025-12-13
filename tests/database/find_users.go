@@ -1,12 +1,12 @@
 package database_tests
 
 import (
-	"github.com/Azat201003/summorist-shared/gen/go/common"
+	pb "github.com/Azat201003/summorist-shared/gen/go/users"
 	"github.com/Azat201003/summorist-users/internal/passwords"
 )
 
 func (s *databaseSuite) TestFindUsersOk() {
-	users, err := s.dbc.FindUsers(&common.User{
+	users, err := s.dbc.FindUsers(&pb.User{
 		Username: "Abeme",
 	})
 	s.NoError(err)

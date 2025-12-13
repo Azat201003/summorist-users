@@ -3,5 +3,6 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(64) UNIQUE NOT NULL,
     password_hash BYTEA NOT NULL,
     refresh_token TEXT,
-    test BOOLEAN DEFAULT TRUE 
+    test BOOLEAN DEFAULT TRUE,
+    admin BOOLEAN DEFAULT FALSE 
 );
