@@ -1,13 +1,13 @@
 package server_tests
 
 import (
-	"github.com/Azat201003/summorist-shared/gen/go/common"
+	pb "github.com/Azat201003/summorist-shared/gen/go/users"
 	"context"
 	"io"
 )
 
 func (s *serverSuite) TestGetFilteredOk() {
-	stream, err := (*s.usersClient).GetFiltered(context.Background(), &common.User{
+	stream, err := (*s.usersClient).GetFiltered(context.Background(), &pb.User{
 		Username: "Abeme",
 	})
 	s.NoError(err)
@@ -18,7 +18,7 @@ func (s *serverSuite) TestGetFilteredOk() {
 }
 
 func (s *serverSuite) TestGetFilteredNotFound() {
-	stream, err := (*s.usersClient).GetFiltered(context.Background(), &common.User{
+	stream, err := (*s.usersClient).GetFiltered(context.Background(), &pb.User{
 		Username: "Name that does not exists so I believe it",
 	})
 	s.NoError(err)

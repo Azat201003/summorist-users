@@ -29,7 +29,7 @@ jobs:
     - name: Wait app
       run: |+
         set -a
-        source config.env.deploy
+        source config.deploy.env
         set +a
         ./scripts/wait-for.sh $APP_CONTAINER_NAME
 

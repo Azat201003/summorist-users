@@ -3,7 +3,7 @@ package server_tests
 import (
 	"context"
 
-	pb "github.com/Azat201003/summorist-shared/gen/go/user-service"
+	pb "github.com/Azat201003/summorist-shared/gen/go/users"
 	"github.com/Azat201003/summorist-users/internal/tokens"
 )
 

@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	pb "github.com/Azat201003/summorist-shared/gen/go/user-service"
+	pb "github.com/Azat201003/summorist-shared/gen/go/users"
 
 	"github.com/Azat201003/summorist-users/internal/config"
 	"github.com/Azat201003/summorist-users/internal/database"

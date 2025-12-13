@@ -3,8 +3,7 @@ package server_tests
 import (
 	"context"
 
-	"github.com/Azat201003/summorist-shared/gen/go/common"
-	pb "github.com/Azat201003/summorist-shared/gen/go/user-service"
+	pb "github.com/Azat201003/summorist-shared/gen/go/users"
 	"github.com/Azat201003/summorist-users/internal/passwords"
 	"github.com/Azat201003/summorist-users/internal/tokens"
 )
@@ -16,7 +15,7 @@ func (s *serverSuite) TestSignInOk() {
 	})
 	s.NoError(err)
 
-	users, err := s.dbc.FindUsers(&common.User{
+	users, err := s.dbc.FindUsers(&pb.User{
 		Username: "Abeme",
 	})
 	if err == nil && len(users) == 1 {
@@ -27,7 +26,7 @@ func (s *serverSuite) TestSignInOk() {
 	s.NoError(err)
 
 	users, err = s.dbc.FindUsers(
-		&common.User{Id: id},
+		&pb.User{Id: id},
 	)
 	s.NoError(err)
 	s.Equal(len(users), 1)
