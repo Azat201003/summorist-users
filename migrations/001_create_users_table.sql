@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash BYTEA NOT NULL,
     refresh_token TEXT,
     test BOOLEAN DEFAULT TRUE,
-    admin BOOLEAN DEFAULT FALSE 
+   	admin BOOLEAN DEFAULT FALSE 
 );
