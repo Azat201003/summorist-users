@@ -9,10 +9,10 @@ import (
 
 func (s *serverSuite) TestRefreshTokenOk() {
 	users, err := s.dbc.FindUsers(&pb.User{Username: "Abeme"})
-	user := users[0]
+	user := &users[0]
 
 	response, err := (*s.usersClient).RefreshTokens(context.Background(), &pb.RefreshRequest{
-		Username:     "Abeme",
+		UserId:     	1,
 		RefreshToken: user.RefreshToken,
 	})
 

@@ -1,20 +1,18 @@
 package server_tests
 
 import (
-	"github.com/stretchr/testify/suite"
+	"os"
 	"testing"
 
-	"fmt"
+	"github.com/stretchr/testify/suite"
 
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"fmt"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
 	pb "github.com/Azat201003/summorist-shared/gen/go/users"
 
-	"github.com/Azat201003/summorist-users/internal/config"
 	"github.com/Azat201003/summorist-users/internal/database"
 )
 
@@ -26,8 +24,7 @@ type serverSuite struct {
 
 func (s *serverSuite) SetupTest() {
 	// service client
-	conf := config.GetConfig()
-	conn, err := grpc.NewClient(fmt.Sprintf("%v:%v", conf.Host, conf.Port), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(fmt.Sprintf("%v:%v", os.Getenv("USERS_HOST"), os.Getenv("USERS_PORT")), grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	s.NoError(err)
 
@@ -35,19 +32,9 @@ func (s *serverSuite) SetupTest() {
 	s.usersClient = &client
 
 	// database
-	dsn := fmt.Sprintf(
-		"host=%v user=%v password=%v dbname=%v port=%v sslmode=disable",
-		conf.DBHost,
-		conf.DBUser,
-		conf.DBPassword,
-		conf.DBName,
-		conf.DBPort,
-	)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	s.dbc = &database.DBController{}
+	err = s.dbc.InitDB()
 	s.NoError(err)
-	s.dbc = &database.DBController{
-		DB: db,
-	}
 }
 
 func TestServer(t *testing.T) {

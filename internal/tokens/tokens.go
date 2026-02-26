@@ -2,14 +2,14 @@ package tokens
 
 import (
 	"crypto/rand"
-	"github.com/Azat201003/summorist-users/internal/config"
 	"github.com/golang-jwt/jwt/v5"
 	"math/big"
 	"time"
+	"os"
 )
 
 func GenerateToken(userId uint64) (string, error) {
-	privateKey := config.GetConfig().PrivateKey
+	privateKey := os.Getenv("USERS_PRIVATE_KEY")
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS512, jwt.MapClaims{
 		"sub": userId,
@@ -27,7 +27,7 @@ func GenerateToken(userId uint64) (string, error) {
 
 func ValidateToken(tokenString string) (uint64, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
-		key := config.GetConfig().PublicKey
+		key := os.Getenv("USERS_PUBLIC_KEY")
 		parsed, err := jwt.ParseRSAPublicKeyFromPEM([]byte(key))
 		return parsed, err
 	}, jwt.WithValidMethods([]string{jwt.SigningMethodRS512.Alg()}))

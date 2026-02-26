@@ -3,6 +3,8 @@ package database
 import (
 	pb "github.com/Azat201003/summorist-shared/gen/go/users"
 	"gorm.io/gorm"
+	"gorm.io/driver/postgres"
+	"os"
 )
 
 type DBController struct {
@@ -41,5 +43,17 @@ func (dbc *DBController) FindUsersBriefly(filter *pb.User) ([]pb.User, error) {
 	var users []pb.User
 	result := dbc.DB.Where(filter).Select("user_id", "username", "is_admin").Find(&users)
 	return users, result.Error
+}
+
+func (dbc *DBController) InitDB() error {	
+	db, err := gorm.Open(postgres.Open(os.Getenv("USERS_POSTGRES_DSN")), &gorm.Config{})
+
+	if err != nil {
+		return err
+	}
+
+	dbc.DB = db
+
+	return nil
 }
 

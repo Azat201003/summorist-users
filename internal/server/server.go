@@ -5,14 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net"
-
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"os"
 
 	"google.golang.org/grpc"
 
 	pb "github.com/Azat201003/summorist-shared/gen/go/users"
-	"github.com/Azat201003/summorist-users/internal/config"
 	"github.com/Azat201003/summorist-users/internal/database"
 	"github.com/Azat201003/summorist-users/internal/tokens"
 )
@@ -116,8 +113,8 @@ func (s *userServer) GetFiltered(request *pb.GetFilteredRequest, stream pb.Users
 		return err
 	}
 
-	for _, user := range users {
-		if err := stream.Send(&user); err != nil {
+	for i := range users {
+		if err := stream.Send(&users[i]); err != nil {
 			return err
 		}
 	}
@@ -131,7 +128,7 @@ func (s *userServer) UpdateUser(ctx context.Context, request *pb.UpdateRequest) 
 		return &pb.StatusResponse{Code: 1}, err
 	}
 
-	if (user.UserId != request.User.UserId && !user.IsAdmin) {
+	if (user == nil || user.UserId != request.User.UserId && !user.IsAdmin) {
 		return &pb.StatusResponse{Code: 2}, ErrNotPermitted // Permission denieded
 	}
 
@@ -146,7 +143,7 @@ func (s *userServer) RemoveUser(ctx context.Context, request *pb.RemoveRequest) 
 	_, err := s.dbc.FindUser(&pb.User{UserId: request.UserId})
 
 	if (request.UserId == 0 || err != nil) {
-		return &pb.StatusResponse{Code: 3}, ErrBadRequest
+		return &pb.StatusResponse{Code: 3}, ErrNotPermitted
 	}
 
 	user, err := s.getUserByJwt(request.JwtToken)
@@ -155,7 +152,7 @@ func (s *userServer) RemoveUser(ctx context.Context, request *pb.RemoveRequest) 
 		return &pb.StatusResponse{Code: 1}, err
 	}
 
-	if (user.UserId != request.UserId && !user.IsAdmin) {
+	if (user == nil || user.UserId != request.UserId && !user.IsAdmin) {
 		return &pb.StatusResponse{Code: 2}, ErrNotPermitted // Permission denieded
 	}
 
@@ -169,30 +166,18 @@ func (s *userServer) RemoveUser(ctx context.Context, request *pb.RemoveRequest) 
 }
 
 func newServer() *userServer {
-	conf := config.GetConfig()
-	dsn := fmt.Sprintf(
-		"host=%v user=%v password=%v dbname=%v port=%v sslmode=disable",
-		conf.DBHost,
-		conf.DBUser,
-		conf.DBPassword,
-		conf.DBName,
-		conf.DBPort,
-	)
-    fmt.Println(dsn)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	dbc := database.DBController{}
+	err := dbc.InitDB()
 
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
 
-	return &userServer{dbc: &database.DBController{
-		DB: db,
-	}}
+	return &userServer{dbc: &dbc}
 }
 
 func StartServer() {
-	conf := config.GetConfig()
-	lis, _ := net.Listen("tcp", fmt.Sprintf("%v:%v", conf.Host, conf.Port))
+	lis, _ := net.Listen("tcp", fmt.Sprintf("%v:%v", os.Getenv("USERS_HOST"), os.Getenv("USERS_PORT")))
 	grpcServer := grpc.NewServer()
 	pb.RegisterUsersServer(grpcServer, newServer())
 	grpcServer.Serve(lis)

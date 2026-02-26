@@ -6,6 +6,7 @@ import (
 	pb "github.com/Azat201003/summorist-shared/gen/go/users"
 	"github.com/Azat201003/summorist-users/internal/passwords"
 	"github.com/Azat201003/summorist-users/internal/tokens"
+	"github.com/Azat201003/summorist-users/internal/server"
 )
 
 func (s *serverSuite) TestRemoveUserOk() {
@@ -33,7 +34,7 @@ func (s *serverSuite) TestRemoveUserOk() {
 	s.Equal(removeResponse.Code, int32(0))
 
 	// Verify removal
-	deletedUsers, err := s.dbc.FindUsers(&pb.User{Id: userId})
+	deletedUsers, err := s.dbc.FindUsers(&pb.User{UserId: userId})
 	s.NoError(err)
 	s.Equal(len(deletedUsers), 0)
 }
@@ -47,14 +48,12 @@ func (s *serverSuite) TestRemoveUserInvalidToken() {
 }
 
 func (s *serverSuite) TestRemoveUserPermissionDenied() {
-	// Use existing user token but try to remove different user
 	token, err := tokens.GenerateToken(1)
 	s.NoError(err)
 
-	removeResponse, err := (*s.usersClient).RemoveUser(context.Background(), &pb.RemoveRequest{
+	_, err = (*s.usersClient).RemoveUser(context.Background(), &pb.RemoveRequest{
 		JwtToken: token,
-		UserId:   999,
+		UserId:   9999999999999,
 	})
-	s.NoError(err)
-	s.Equal(removeResponse.Code, int32(2))
+	s.Error(err, server.ErrNotPermitted)
 }

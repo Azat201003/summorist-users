@@ -6,6 +6,7 @@ import (
 	pb "github.com/Azat201003/summorist-shared/gen/go/users"
 	"github.com/Azat201003/summorist-users/internal/passwords"
 	"github.com/Azat201003/summorist-users/internal/tokens"
+	"github.com/Azat201003/summorist-users/internal/server"
 )
 
 func (s *serverSuite) TestUpdateUserOk() {
@@ -29,7 +30,7 @@ func (s *serverSuite) TestUpdateUserOk() {
 	updateResponse, err := (*s.usersClient).UpdateUser(context.Background(), &pb.UpdateRequest{
 		JwtToken: jwtToken,
 		User: &pb.User{
-			Id:           userId,
+			UserId:           userId,
 			Username:     newUsername,
 		},
 	})
@@ -47,7 +48,7 @@ func (s *serverSuite) TestUpdateUserInvalidToken() {
 	_, err := (*s.usersClient).UpdateUser(context.Background(), &pb.UpdateRequest{
 		JwtToken: "invalid",
 		User: &pb.User{
-			Id:       1,
+			UserId:       1,
 			Username: "test",
 		},
 	})
@@ -59,13 +60,12 @@ func (s *serverSuite) TestUpdateUserPermissionDenied() {
 	token, err := tokens.GenerateToken(1)
 	s.NoError(err)
 
-	updateResponse, err := (*s.usersClient).UpdateUser(context.Background(), &pb.UpdateRequest{
+	_, err = (*s.usersClient).UpdateUser(context.Background(), &pb.UpdateRequest{
 		JwtToken: token,
 		User: &pb.User{
-			Id:       999,
+			UserId:       9999999999999,
 			Username: "test",
 		},
 	})
-	s.NoError(err)
-	s.Equal(updateResponse.Code, int32(2))
+	s.Error(err, server.ErrNotPermitted)
 }

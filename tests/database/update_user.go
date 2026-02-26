@@ -19,14 +19,14 @@ func (s *databaseSuite) TestUpdateUserOk() {
 	// Update the user
 	newUsername := "updated-" + generateRandomString(10)
 	updatedUser := &pb.User{
-		Id:       userId,
+		UserId:       userId,
 		Username: newUsername,
 	}
 	err = s.dbc.UpdateUser(updatedUser)
 	s.NoError(err)
 
 	// Find the user and verify update
-	foundUsers, err := s.dbc.FindUsers(&pb.User{Id: userId})
+	foundUsers, err := s.dbc.FindUsers(&pb.User{UserId: userId})
 	s.NoError(err)
 	s.Len(foundUsers, 1)
 	s.Equal(newUsername, foundUsers[0].Username)

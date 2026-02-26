@@ -26,7 +26,7 @@ func (s *serverSuite) TestSignInOk() {
 	s.NoError(err)
 
 	users, err = s.dbc.FindUsers(
-		&pb.User{Id: id},
+		&pb.User{UserId: id},
 	)
 	s.NoError(err)
 	s.Equal(len(users), 1)
