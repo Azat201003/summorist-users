@@ -1,10 +1,11 @@
 package database
 
 import (
-	pb "github.com/Azat201003/summorist-shared/gen/go/users"
-	"gorm.io/gorm"
-	"gorm.io/driver/postgres"
 	"os"
+
+	pb "github.com/Azat201003/summorist-shared/gen/go/users"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type DBController struct {

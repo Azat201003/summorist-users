@@ -8,15 +8,18 @@ import (
 )
 
 func (s *serverSuite) TestAuthorizeOk() {
-	token, err := tokens.GenerateToken(27)
+	token, err := tokens.GenerateToken(uint64(1))
 
 	s.NoError(err)
+
 
 	response, err := (*s.usersClient).Authorize(context.Background(), &pb.AuthRequest{
 		JwtToken: token,
 	})
 
+
 	s.NoError(err)
 	s.Equal(response.Code, int32(0))
-	s.Equal(response.UserId, uint64(27))
+	s.Equal(response.UserId, uint64(1))
 }
+

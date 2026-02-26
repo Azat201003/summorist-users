@@ -7,40 +7,18 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   test:
     environment: deploy    
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
   
-    - name: Build
-      env:
-        PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
-        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      run: |+
-        set -a
-        source config.deploy.env
-        set +a
-        docker compose -f docker-compose.yml up -d --build
-        docker exec $POSTGRES_CONTAINER_NAME sh -c "cat /docker-entrypoint-initdb.d/*.sql | psql $POSTGRES_DB $POSTGRES_USER"
-
-    - name: Wait app
-      run: |+
-        set -a
-        source config.deploy.env
-        set +a
-        ./scripts/wait-for.sh $APP_CONTAINER_NAME
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.26'
 
     - name: Test
-      env:
-        PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
-        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      run: |+
-        set -a
-        source config.deploy.env
-        set +a
-        docker exec $APP_CONTAINER_NAME go test ./tests/...
+      run: make test
+
 
