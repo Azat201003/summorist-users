@@ -1,14 +1,9 @@
-name: Go
+name: Test
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push, pull_request]
 
 jobs:
   test:
-    environment: deploy    
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
