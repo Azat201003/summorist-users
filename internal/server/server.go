@@ -36,17 +36,17 @@ func (s *UserServer) SignIn(ctx context.Context, request *pb.SignInRequest) (*pb
 		Username:     request.Username,
 		PasswordHash: request.PasswordHash,
 	})
-	
+
 	if err != nil {
 		return &pb.SignInResponse{Code: 1}, err
 	}
-	
+
 	jwtToken, err := tokens.GenerateToken(user.UserId)
-	
+
 	if err != nil {
 		return &pb.SignInResponse{Code: 2}, err
 	}
-	
+
 	return &pb.SignInResponse{JwtToken: jwtToken, Code: 0, RefreshToken: user.RefreshToken}, nil
 }
 
@@ -79,7 +79,7 @@ func (s *UserServer) RefreshTokens(ctx context.Context, request *pb.RefreshReque
 	}
 
 	user, err := s.DBC.FindUser(&pb.User{
-		UserId:     	request.UserId,
+		UserId:       request.UserId,
 		RefreshToken: request.RefreshToken,
 	})
 
@@ -88,7 +88,7 @@ func (s *UserServer) RefreshTokens(ctx context.Context, request *pb.RefreshReque
 	}
 
 	return &pb.RefreshResponse{
-		RefreshToken:	user.RefreshToken,
+		RefreshToken: user.RefreshToken,
 		JwtToken:     jwtToken,
 		Code:         0,
 	}, nil
@@ -115,12 +115,12 @@ func (s *UserServer) GetFiltered(request *pb.GetFilteredRequest, stream pb.Users
 
 func (s *UserServer) UpdateUser(ctx context.Context, request *pb.UpdateRequest) (*pb.StatusResponse, error) {
 	user, err := s.getUserByJwt(request.JwtToken)
-	
-	if (err != nil) {
+
+	if err != nil {
 		return &pb.StatusResponse{Code: 1}, err
 	}
 
-	if (user == nil || user.UserId != request.User.UserId && !user.IsAdmin) {
+	if user == nil || user.UserId != request.User.UserId && !user.IsAdmin {
 		return &pb.StatusResponse{Code: 2}, ErrNotPermitted // Permission denieded
 	}
 
@@ -133,12 +133,12 @@ func (s *UserServer) UpdateUser(ctx context.Context, request *pb.UpdateRequest) 
 
 func (s *UserServer) RemoveUser(ctx context.Context, request *pb.RemoveRequest) (*pb.StatusResponse, error) {
 	user, err := s.getUserByJwt(request.JwtToken)
-	
-	if (request.UserId == 0 || err != nil) {
+
+	if request.UserId == 0 || err != nil {
 		return &pb.StatusResponse{Code: 2}, ErrNotPermitted
 	}
 
-	if (user == nil || user.UserId != request.UserId && !user.IsAdmin) {
+	if user == nil || user.UserId != request.UserId && !user.IsAdmin {
 		return &pb.StatusResponse{Code: 3}, ErrNotPermitted // Permission denieded
 	}
 

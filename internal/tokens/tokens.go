@@ -4,8 +4,8 @@ import (
 	"crypto/rand"
 	"github.com/golang-jwt/jwt/v5"
 	"math/big"
-	"time"
 	"os"
+	"time"
 )
 
 func GenerateToken(userId uint64) (string, error) {

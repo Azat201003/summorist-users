@@ -26,12 +26,10 @@ func (s *serverSuite) TestRemoveUserMyselfOk() {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	s.dbmock.ExpectCommit()
 
-
 	removeResponse, err := (*s.usersClient).RemoveUser(context.Background(), &pb.RemoveRequest{
 		JwtToken: jwtToken,
 		UserId:   userId,
 	})
-	
 
 	s.NoError(err)
 	s.Equal(removeResponse.Code, int32(0))
@@ -45,7 +43,6 @@ func (s *serverSuite) TestRemoveUserInvalidToken() {
 		JwtToken: "invalid",
 		UserId:   1,
 	})
-	
 
 	s.Error(err)
 }
@@ -55,17 +52,15 @@ func (s *serverSuite) TestRemoveUserPermissionDeniedUndefinedUserId() {
 	s.NoError(err)
 	definedUserId := uint64(1)
 	undefinedUserId := uint64(999999999999999)
-	
+
 	s.dbmock.ExpectQuery(`SELECT \* FROM "users"`).
 		WithArgs(definedUserId, 1).
 		WillReturnRows(sqlmock.NewRows([]string{"is_admin", "password_hash", "refresh_token", "username", "user_id"}).AddRow(false, []byte("..."), "...", "...", definedUserId))
-
 
 	_, err = (*s.usersClient).RemoveUser(context.Background(), &pb.RemoveRequest{
 		JwtToken: token,
 		UserId:   undefinedUserId,
 	})
-	
 
 	s.Error(err, server.ErrNotPermitted)
 	s.NoError(s.dbmock.ExpectationsWereMet())

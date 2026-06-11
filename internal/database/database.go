@@ -40,13 +40,13 @@ func (dbc *DBController) FindUser(filter *pb.User) (*pb.User, error) {
 	return user, result.Error
 }
 
-func (dbc *DBController) FindUsersBriefly(filter *pb.User) ([]pb.User, error) {	
+func (dbc *DBController) FindUsersBriefly(filter *pb.User) ([]pb.User, error) {
 	var users []pb.User
 	result := dbc.DB.Where(filter).Select("user_id", "username", "is_admin").Find(&users)
 	return users, result.Error
 }
 
-func (dbc *DBController) InitDB() error {	
+func (dbc *DBController) InitDB() error {
 	db, err := gorm.Open(postgres.Open(os.Getenv("USERS_POSTGRES_DSN")), &gorm.Config{})
 
 	if err != nil {
@@ -57,4 +57,3 @@ func (dbc *DBController) InitDB() error {
 
 	return nil
 }
-

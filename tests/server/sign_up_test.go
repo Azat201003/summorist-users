@@ -20,12 +20,10 @@ func (s *serverSuite) TestRegisterUserOk() {
 			AddRow(1))
 	s.dbmock.ExpectCommit()
 
-
 	response, err := (*s.usersClient).SignUp(context.Background(), &pb.User{
 		Username:     "test",
 		PasswordHash: passwords.Hash(password),
 	})
-
 
 	s.NoError(err)
 	s.Equal(response.Code, int32(0))

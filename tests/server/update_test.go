@@ -4,8 +4,8 @@ import (
 	"context"
 
 	pb "github.com/Azat201003/summorist-shared/gen/go/users"
-	"github.com/Azat201003/summorist-users/internal/tokens"
 	"github.com/Azat201003/summorist-users/internal/server"
+	"github.com/Azat201003/summorist-users/internal/tokens"
 	"github.com/DATA-DOG/go-sqlmock"
 )
 
@@ -26,11 +26,10 @@ func (s *serverSuite) TestUpdateUserMyselfOk() {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	s.dbmock.ExpectCommit()
 
-
 	updateResponse, err := (*s.usersClient).UpdateUser(context.Background(), &pb.UpdateRequest{
 		JwtToken: jwtToken,
 		User: &pb.User{
-			UserId: userId,
+			UserId:   userId,
 			Username: newUsername,
 		},
 	})
@@ -46,7 +45,7 @@ func (s *serverSuite) TestUpdateUserInvalidToken() {
 	_, err := (*s.usersClient).UpdateUser(context.Background(), &pb.UpdateRequest{
 		JwtToken: "invalid",
 		User: &pb.User{
-			UserId:       1,
+			UserId:   1,
 			Username: "test",
 		},
 	})
@@ -58,19 +57,17 @@ func (s *serverSuite) TestUpdateUserPermissionDeniedUndefinedUserId() {
 	s.NoError(err)
 	definedUserId := uint64(1)
 	undefinedUserId := uint64(999999999999999)
-	
+
 	s.dbmock.ExpectQuery(`SELECT \* FROM "users"`).
 		WithArgs(definedUserId, 1).
 		WillReturnRows(sqlmock.NewRows([]string{"is_admin", "password_hash", "refresh_token", "username", "user_id"}).AddRow(false, []byte("..."), "...", "...", definedUserId))
 
-
 	_, err = (*s.usersClient).UpdateUser(context.Background(), &pb.UpdateRequest{
 		JwtToken: token,
 		User: &pb.User{
-			UserId:   undefinedUserId,
+			UserId: undefinedUserId,
 		},
 	})
-	
 
 	s.Error(err, server.ErrNotPermitted)
 	s.NoError(s.dbmock.ExpectationsWereMet())

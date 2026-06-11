@@ -7,7 +7,6 @@ import (
 	"os"
 	"testing"
 
-
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/suite"
 
@@ -17,7 +16,6 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-
 
 	pb "github.com/Azat201003/summorist-shared/gen/go/users"
 
@@ -30,8 +28,8 @@ type serverSuite struct {
 	usersClient *pb.UsersClient
 	dbc         *database.DBController
 	dbmock      sqlmock.Sqlmock
-	lis 				net.Listener
-	db 					*sql.DB
+	lis         net.Listener
+	db          *sql.DB
 }
 
 func (s *serverSuite) SetupSuite() {
@@ -45,7 +43,7 @@ func (s *serverSuite) SetupSuite() {
 	// database
 	fmt.Println("database setting up")
 	dialector := postgres.New(postgres.Config{
-		Conn: db,
+		Conn:       db,
 		DriverName: "postgres",
 	})
 	gormdb, err := gorm.Open(dialector, &gorm.Config{
@@ -53,14 +51,14 @@ func (s *serverSuite) SetupSuite() {
 	})
 	s.NoError(err)
 	s.dbc = &database.DBController{DB: gormdb}
-	
+
 	// service server
 	fmt.Println("service server setting up")
 	s.lis, _ = net.Listen("tcp", fmt.Sprintf("%v:%v", "0.0.0.0", os.Getenv("USERS_PORT")))
 	grpcServer := grpc.NewServer()
 	pb.RegisterUsersServer(grpcServer, &server.UserServer{DBC: s.dbc})
 	go grpcServer.Serve(s.lis)
-	
+
 	// service client
 	fmt.Println("service client setting up")
 	conn, err := grpc.NewClient(fmt.Sprintf("%v:%v", "0.0.0.0", os.Getenv("USERS_PORT")), grpc.WithTransportCredentials(insecure.NewCredentials()))

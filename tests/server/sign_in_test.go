@@ -17,13 +17,11 @@ func (s *serverSuite) TestSignInOk() {
 	s.dbmock.ExpectQuery(`SELECT \* FROM "users"`).
 		WithArgs(username, passwordHash, 1).
 		WillReturnRows(sqlmock.NewRows([]string{"is_admin", "password_hash", "refresh_token", "username", "user_id"}).AddRow(false, passwordHash, "...", username, userId))
-	
 
 	response, err := (*s.usersClient).SignIn(context.Background(), &pb.SignInRequest{
 		PasswordHash: passwordHash,
 		Username:     username,
 	})
-	
 
 	s.NoError(err)
 

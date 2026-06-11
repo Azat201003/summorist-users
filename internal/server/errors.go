@@ -6,6 +6,5 @@ import (
 
 var (
 	ErrNotPermitted = errors.New("Not permitted")
-	ErrBadRequest = errors.New("Bad request")
+	ErrBadRequest   = errors.New("Bad request")
 )
-
