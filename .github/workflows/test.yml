@@ -14,6 +14,6 @@ jobs:
         go-version: '1.25'
 
     - name: Test
-      run: source scripts/generate_keys.sh && go test ./tests/...
+      run: source scripts/generate_keys.sh && go test ./tests/... -v
 
 

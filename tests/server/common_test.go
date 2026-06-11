@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"net"
-	"os"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -54,14 +53,15 @@ func (s *serverSuite) SetupSuite() {
 
 	// service server
 	fmt.Println("service server setting up")
-	s.lis, _ = net.Listen("tcp", fmt.Sprintf("%v:%v", "0.0.0.0", os.Getenv("USERS_PORT")))
+	s.lis, err = net.Listen("tcp", "0.0.0.0:9001")
+	s.NoError(err)
 	grpcServer := grpc.NewServer()
 	pb.RegisterUsersServer(grpcServer, &server.UserServer{DBC: s.dbc})
 	go grpcServer.Serve(s.lis)
 
 	// service client
 	fmt.Println("service client setting up")
-	conn, err := grpc.NewClient(fmt.Sprintf("%v:%v", "0.0.0.0", os.Getenv("USERS_PORT")), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("0.0.0.0:9001", grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	s.NoError(err)
 
